@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+
+  front:
+    build: 
+      context: ./front
+      target: dev
+    ports: 
+      - "5173:5173"
+    volumes:
+      - ./front:/app                 # Mounts your code for live reload during development
+      - /app/node_modules            # Prevents host node_modules from interfering (clean deps)
+    restart: unless-stopped
+    depends_on: 
+      - back
+    command: npm run dev
+
+
+  back:
+    build: 
+      context: ./back
+      target: dev
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./back:/app                    # Same as above, for backend code
+      - /app/node_modules              # Same container-isolated node_modules
+    restart: unless-stopped
+    env_file:
+      - .env.dev
+    depends_on:
+      - mongo
+    command: nodemon index.js
+    
+
+  mongo:
+    image: mongo:7.0
+    volumes:
+      - mongoDb:/data/db
+    restart: unless-stopped
+    
+
+volumes:
+  mongoDb:

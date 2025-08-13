@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  nginx:
+    build: 
+      context: ./nginx
+    depends_on:
+      - back
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: always
+  # front:
+  #   build: 
+  #     context: ./front
+  #     target: prod
+  #   ports: 
+  #     - "5173:80"
+  #   restart: always
+  #   depends_on: 
+  #     - back
+
+
+  back:
+    build: 
+      context: ./back
+      target: prod
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./back:/app
+    restart: always
+    env_file: 
+      - .env
+    depends_on:
+      - mongo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/back"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    image: mongo:7.0
+    volumes:
+      - mongoDb:/data/db
+    restart: always
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  mongoDb:
