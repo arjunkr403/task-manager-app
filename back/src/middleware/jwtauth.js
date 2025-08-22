@@ -1,18 +1,18 @@
 import jwt from 'jsonwebtoken';
+import { errorHandler } from './error.js';
 const JWT_SECRET = process.env.JWT_SECRET;
 export function authVerify(req, res, next) {
     try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const token =req.cookies.token || (req.headers.authorization && req.headers.authorization.startsWith('Bearer ') ? req.headers.authorization.split(' ')[1] : null);
         if (!token) {
-            return res.status(401).json({ message: 'No token provided' });
+            return next(errorHandler(401, 'Authentication token is required'));
         }
         jwt.verify(token, JWT_SECRET, (err, user) => {
             if (err) {
                 if (err.name === 'TokenExpiredError') {
-                    return res.status(401).json({ message: 'Token expired' });
+                    return next(errorHandler(401, 'Token expired'));
                 }
-                return res.status(403).json({ message: 'Invalid token' });
+                return next(errorHandler(401, 'Invalid token'));
             }
             else {
                 req.user = user;
@@ -20,8 +20,7 @@ export function authVerify(req, res, next) {
             }
         });
     } catch (error) {
-        console.error("JWT verification error:", error);
-        return res.status(500).json({ message: 'Internal server error' });
+        return next(errorHandler(500, 'Internal server error'));
     }
 
 }
