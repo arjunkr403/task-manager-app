@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Boards() {
+export default function BoardDetail() {
   return (
     <div>
       

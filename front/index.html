@@ -1,13 +1,28 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskBoard</title>
+  <script>
+    // Pre-bootstrap theme sync: apply 'dark' class early to avoid flash / mismatches
+    (function () {
+      try {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const useDark = saved === 'dark' || (!saved && prefersDark);
+        document.documentElement.classList.toggle('dark', useDark);
+      } catch (e) {
+        /* ignore */
+      }
+    })();
+  </script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

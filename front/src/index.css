@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+    --bg: #F9FAFB;
+    --card: #FFFFFF;
+    --text: #0F172A;
+    --muted: #475569;
+    --border: #E5E7EB;
+}
+
+
+html.dark {
+    --bg: #0B1220;
+    --card: #111827;
+    --text: #E5E7EB;
+    --muted: #94A3B8;
+    --border: #1F2937;
+}
+
+
+body {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.card {
+    background: var(--card);
+    border-color: var(--border);
+}
+
+.muted {
+    color: var(--muted);
+}

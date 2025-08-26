@@ -3,8 +3,6 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import { errorHandler } from '../middleware/error.js';
 
-const jwtkey = process.env.JWT_SECRET;
-
 export const signup = async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
@@ -27,15 +25,17 @@ export const signup = async (req, res, next) => {
             password: hashpassword
         });
         console.log(newUser);
-        const token = jwt.sign({ id: newUser._id }, jwtkey);
-        // const { password: pass, ...rest } = newUser._doc; //omit password from user data
-        // res.cookie("token", token, {
-        //     httpOnly: true,
-        //     sameSite: "none",
-        //     maxAge: 24 * 60 * 60 * 1000 // 1 day
-        // }).status(200).json(rest);
-        res.status(201).json({ message: "User created successfully" });
+        const jwtkey = process.env.JWT_SECRET;
+        if (!jwtkey) return next(errorHandler(500, 'JWT_SECRET not configured'));
 
+        const token = jwt.sign({ id: newUser._id }, jwtkey);
+        const { password: pass, ...rest } = newUser._doc; //omit password from user data
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "none",
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        }).status(201).json({ user: rest, token });
     } catch (error) {
         next(error);
     }
@@ -54,15 +54,19 @@ export const signin = async (req, res, next) => {
             return next(errorHandler(400, 'User not found'));
         }
         const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) return next(errorHandler, 'Invalid password');
+        if (!validPassword) return next(errorHandler(400, 'Invalid password'));
+
+        const jwtkey = process.env.JWT_SECRET;
+        if (!jwtkey) return next(errorHandler(500, 'JWT_SECRET not configured'));
+
         const token = jwt.sign({ id: user._id }, jwtkey);
-        const { password: pass, ...rest } = newUser._doc; //omit password from user data
+        const { password: pass, ...rest } = user._doc; //omit password from user data
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "none",
             maxAge: 24 * 60 * 60 * 1000 // 1 day
-        }).status(200).json(rest);
+        }).status(200).json({ user: rest, token });
     } catch (error) {
         next(error);
     }

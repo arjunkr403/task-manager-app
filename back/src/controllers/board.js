@@ -17,9 +17,11 @@ export async function createBoard(req, res, next) {
 
 export async function updateBoard(req,res,next){
     try {
+        const {title}=req.body;
+        if(!title) return next(errorHandler(404,"Title not found"));
         const board = await Board.findOneAndUpdate(
             {_id:req.params.id,owner: req.user.id}, //filter
-            req.body, //update
+            {title:title}, //update
             {new:true} //return updated data
         )
         if(!board) return next(errorHandler(404,"Not found to update"));
