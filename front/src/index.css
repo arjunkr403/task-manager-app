@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-    --bg: #F9FAFB;
+    --bg: rgb(232, 230, 230);
     --card: #FFFFFF;
     --text: #0F172A;
     --muted: #475569;

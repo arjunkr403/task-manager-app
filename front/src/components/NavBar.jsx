@@ -4,21 +4,24 @@ import { MoonIcon, SunIcon, ArrowLeftStartOnRectangleIcon, ArrowRightEndOnRectan
 
 
 function NavBar() {
-    const [theme, setTheme] = useState("light");
     const nav = useNavigate();
     const loc = useLocation();
+    const [theme, setTheme] = useState(
+        localStorage.getItem('theme') || 'light'
+    );
+
     useEffect(() => {
-        const saved = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-        setTheme(saved)
-        document.documentElement.classList.toggle('dark', saved === 'dark')
-        function onThemeChange(e) {
-            const t = e?.detail || localStorage.getItem('theme')
-            setTheme(t)
-            document.documentElement.classList.toggle('dark', t === 'dark')
+        const html = document.documentElement;
+
+        if (theme === 'dark') {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
         }
-        window.addEventListener('themechange', onThemeChange)
-        return () => window.removeEventListener('themechange', onThemeChange)
-    }, [])
+
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
     function toggleTheme() {
         const t = theme === 'light' ? 'dark' : 'light'
         setTheme(t)
