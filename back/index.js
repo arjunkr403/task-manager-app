@@ -33,9 +33,9 @@ const mongoConnect = async () => {
 }
 mongoConnect();
 
-app.use("/back/auth", authRoute);
-app.use("/back/board", boardRoute);
-app.use("/back/task", taskRoute);
+app.use("/back", authRoute);
+app.use("/back", boardRoute);
+app.use("/back", taskRoute);
 app.get('/test', (req, res) => res.send('Test route working'));
 
 // 404 handler so client sees unmatched routes

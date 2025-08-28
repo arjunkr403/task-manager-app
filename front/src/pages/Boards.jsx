@@ -9,9 +9,14 @@ export default function Boards() {
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState("");
   const [creating, setCreating] = useState(false);
-
+  const [err, setErr] = useState("");
   const [editBoardId, setEditBoardId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
+
+  // delete modal
+  const [deleteBoardId, setDeleteBoardId] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
   const nav = useNavigate();
 
   useEffect(() => {
@@ -21,10 +26,11 @@ export default function Boards() {
   async function fetchBoards() {
     try {
       setLoading(true);
-      const res = await api.get("/board/boards");
+      const res = await api.get("/boards");
       setBoards(res.data);
     } catch (err) {
       console.error("Error fetching boards:", err);
+      setErr(err?.response?.data?.message || "Failed to load boards");
     } finally {
       setLoading(false);
     }
@@ -35,13 +41,13 @@ export default function Boards() {
     if (!title.trim()) return;
     try {
       setCreating(true);
-      const res = await api.post("/board/boards", { title });
+      const res = await api.post("/boards", { title });
       setBoards((prev) => [...prev, res.data]);
       setShowModal(false);
       setTitle("");
     } catch (err) {
       console.error("Create board failed", err);
-      alert(err?.response?.data?.message || "Failed to create board");
+      setErr(err?.response?.data?.message || "Failed to create board");
     } finally {
       setCreating(false);
     }
@@ -51,7 +57,7 @@ export default function Boards() {
     e.preventDefault();
     if (!editTitle.trim()) return;
     try {
-      const res = await api.put(`/board/boards/${editBoardId}`, {
+      const res = await api.put(`/boards/${editBoardId}`, {
         title: editTitle,
       });
       setBoards((prev) =>
@@ -60,17 +66,22 @@ export default function Boards() {
       setEditBoardId(null);
       setEditTitle("");
     } catch (err) {
-      alert(err?.response?.data?.message || "Failed to update board");
+      console.error("Update board failed", err);
+      setErr(err?.response?.data?.message || "Failed to update board");
     }
   }
 
-  async function handleDelete(id) {
-    if (!window.confirm("Are you sure you want to delete this board?")) return;
+  async function confirmDelete() {
     try {
-      await api.delete(`/board/boards/${id}`);
-      setBoards((prev) => prev.filter((b) => b._id !== id));
+      setDeleting(true);
+      await api.delete(`/boards/${deleteBoardId}`);
+      setBoards((prev) => prev.filter((b) => b._id !== deleteBoardId));
+      setDeleteBoardId(null);
     } catch (err) {
-      alert(err?.response?.data?.message || "Failed to delete board");
+      console.error("Delete board failed", err);
+      setErr(err?.response?.data?.message || "Failed to delete board");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -87,7 +98,7 @@ export default function Boards() {
             + Create Board
           </button>
         </div>
-
+        {err && <p className="text-red-600 mb-4">{err}</p>}
         {/* Boards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {loading ? (
@@ -102,7 +113,7 @@ export default function Boards() {
                   setEditBoardId(b._id);
                   setEditTitle(b.title);
                 }}
-                onDelete={() => handleDelete(b._id)}
+                onDelete={() => setDeleteBoardId(b._id)}
               />
             ))
           ) : (
@@ -115,7 +126,7 @@ export default function Boards() {
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-40">
           <div className="card rounded-lg w-full max-w-md p-6 shadow-lg transition-colors">
-            <h2 className="text-lg font-semibold mb-3 ">Create Board</h2>
+            <h2 className="text-lg font-semibold mb-3">Create Board</h2>
             <form onSubmit={handleCreate}>
               <input
                 className="w-full px-3 py-2 border rounded mb-3 bg-transparent"
@@ -174,6 +185,37 @@ export default function Boards() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {deleteBoardId && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-40">
+          <div className="card rounded-lg w-full max-w-md p-6 shadow-lg transition-colors">
+            <h2 className="text-lg font-semibold mb-3 text-red-600">
+              Confirm Delete
+            </h2>
+            <p className="mb-4">
+              Are you sure you want to delete this board? This action cannot be
+              undone.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setDeleteBoardId(null)}
+                className="px-3 py-2 rounded border cursor-pointer font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={deleting}
+                className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer font-medium"
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
           </div>
         </div>
       )}

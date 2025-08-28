@@ -17,7 +17,7 @@ export default function Signup() {
         e.preventDefault();
         try {
             setLoading(true);
-            const res=await api.post('/auth/signup',{username,email,password},{
+            const res=await api.post('/signup',{username,email,password},{
                 withCredentials:true //attach cookies
             });
             if(res?.data?.token) {
@@ -47,7 +47,7 @@ export default function Signup() {
                         onChange={(e) => setUsername(e.target.value)}
                         className="peer w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:placeholder-transparent transition placeholder-gray-400"
                     />
-                    <label htmlFor="username-signup" className="absolute left-3 transition-all duration-150 pointer-events-none text-gray-500 top-0 -translate-y-6 opacity-0 text-base peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:opacity-100 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:-translate-y-8 peer-focus:opacity-100 peer-focus:text-base peer-focus:font-semibold peer-focus:text-blue-500 peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:-translate-y-8 peer-not-placeholder-shown:opacity-100 peer-not-placeholder-shown:text-lg peer-not-placeholder-shown:font-semibold">Username</label>
+                    <label htmlFor="username-signup" className="absolute left-3 transition-all duration-150 pointer-events-none text-gray-500 top-0 -translate-y-6 opacity-0 text-base peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:opacity-100 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:-translate-y-8 peer-focus:opacity-100 peer-focus:text-base peer-focus:font-semibold peer-focus:text-blue-500 peer-not-placeholder-shown:top-1 peer-not-placeholder-shown:-translate-y-8 peer-not-placeholder-shown:opacity-100 peer-not-placeholder-shown:text-base peer-not-placeholder-shown:font-semibold">Username</label>
                 </div>
 
                 {/* Email */}
@@ -61,7 +61,7 @@ export default function Signup() {
                         onChange={(e) => setEmail(e.target.value)}
                         className="peer w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:placeholder-transparent transition placeholder-gray-400"
                     />
-                    <label htmlFor="email-signup" className="absolute left-3 transition-all duration-150 pointer-events-none text-gray-500 top-0 -translate-y-6 opacity-0 text-base peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:opacity-100 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:-translate-y-8 peer-focus:opacity-100 peer-focus:text-base peer-focus:font-semibold peer-focus:text-blue-500 peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:-translate-y-8 peer-not-placeholder-shown:opacity-100 peer-not-placeholder-shown:text-lg peer-not-placeholder-shown:font-semibold">Email</label>
+                    <label htmlFor="email-signup" className="absolute left-3 transition-all duration-150 pointer-events-none text-gray-500 top-0 -translate-y-6 opacity-0 text-base peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:opacity-100 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:-translate-y-8 peer-focus:opacity-100 peer-focus:text-base peer-focus:font-semibold peer-focus:text-blue-500 peer-not-placeholder-shown:top-1 peer-not-placeholder-shown:-translate-y-8 peer-not-placeholder-shown:opacity-100 peer-not-placeholder-shown:text-base peer-not-placeholder-shown:font-semibold">Email</label>
                 </div>
 
                 {/* Password */}
@@ -75,7 +75,7 @@ export default function Signup() {
                         onChange={(e) => setPassword(e.target.value)}
                         className="peer w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:placeholder-transparent transition placeholder-gray-400"
                     />
-                    <label htmlFor="password-signup" className="absolute left-3 transition-all duration-150 pointer-events-none text-gray-500 top-0 -translate-y-6 opacity-0 text-base peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:opacity-100 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:-translate-y-8 peer-focus:opacity-100 peer-focus:text-base peer-focus:font-semibold peer-focus:text-blue-500 peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:-translate-y-8 peer-not-placeholder-shown:opacity-100 peer-not-placeholder-shown:text-lg peer-not-placeholder-shown:font-semibold">Password</label>
+                    <label htmlFor="password-signup" className="absolute left-3 transition-all duration-150 pointer-events-none text-gray-500 top-0 -translate-y-6 opacity-0 text-base peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:opacity-100 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:-translate-y-8 peer-focus:opacity-100 peer-focus:text-base peer-focus:font-semibold peer-focus:text-blue-500 peer-not-placeholder-shown:top-1 peer-not-placeholder-shown:-translate-y-8 peer-not-placeholder-shown:opacity-100 peer-not-placeholder-shown:text-base peer-not-placeholder-shown:font-semibold">Password</label>
                     <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}

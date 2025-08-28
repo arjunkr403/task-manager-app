@@ -11,7 +11,8 @@
 
 html.dark {
     --bg: #0B1220;
-    --card: #111827;
+    --card: #0F1726;
+    /* slightly lifted from background for contrast */
     --text: #E5E7EB;
     --muted: #94A3B8;
     --border: #1F2937;
@@ -26,6 +27,32 @@ body {
 .card {
     background: var(--card);
     border-color: var(--border);
+    /* smooth transitions for hover/bg changes */
+    transition: box-shadow 200ms ease, transform 200ms ease, background-color 200ms ease, border-color 200ms ease;
+    /* gentle default shadow */
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+}
+
+/* stronger dark mode styling: remove obvious border, use subtle glow/gradient */
+html.dark .card {
+    border: none;
+    /* remove border that blends with bg */
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01)), var(--card);
+    box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+}
+
+/* Card header helper used to keep column headers above dragged item */
+.card-header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: linear-gradient(180deg, var(--card), rgba(255, 255, 255, 0));
+    padding-top: 0.25rem;
+    padding-bottom: 0.75rem;
+}
+
+.muted {
+    color: var(--muted);
 }
 
 .muted {

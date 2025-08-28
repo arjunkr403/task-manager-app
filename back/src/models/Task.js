@@ -6,16 +6,18 @@ const taskSchema = mongoose.Schema({
         required: true
     },
     description: {
-        type:String
+        type: String
     },
     board: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Board"  // Reference to the Board model
+        ref: "Board" 
     },
-    completed: {
-        type: Boolean,
-        default: false
+    status: {
+        type: String,
+        enum: ["todo", "inProgress", "done"],
+        default: "todo"
     }
+
 }, { timestamps: true });
 
 

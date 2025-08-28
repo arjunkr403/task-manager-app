@@ -4,7 +4,7 @@ import Board from "../models/Board.js";
 
 export async function createTask(req, res, next) {
     try {
-        const { title, description, completed } = req.body;
+        const { title, description, status } = req.body;
         if (!title) return next(errorHandler(400, "required"));
         const board = await Board.findOne({
             _id: req.params.boardId,
@@ -12,7 +12,7 @@ export async function createTask(req, res, next) {
         })
         if (!board) return next(errorHandler(404, "Board not found or Unauthorized"));
         const task = await Task.create({
-            title, description, completed,
+            title, description, status: status || undefined, // defaults to "todo" if not provided
             board: req.params.boardId,
         })
         res.status(201).json({ success: true, task });
@@ -54,18 +54,18 @@ export async function updateTask(req, res, next) {
         if (task.board.owner.toString() !== req.user.id)
             return next(errorHandler(403, "Unauthorized to update"));
 
-        const { title, description, completed } = req.body;
+        const { title, description, status } = req.body;
         task.title = title ?? task.title;
         task.description = description ?? task.description;
-        task.completed = completed ?? task.completed;
+        task.status = status ?? task.status;
 
         await task.save();
-        res.status(200).json({ success: true }, task);
+        res.status(200).json({ success: true , task});
     }
     catch (error) {
         next(errorHandler(500, "Internal Server Error"))
     }
-} 
+}
 export async function deleteTask(req, res, next) {
     try {
         const task = await Task.findById(req.params.id).populate("board");

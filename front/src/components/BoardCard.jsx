@@ -5,10 +5,10 @@ export default function BoardCard({ title, onView, onEdit, onDelete }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="card rounded-lg shadow-md p-4 relative transition hover:shadow-lg animate-fadeIn">
+    <div className="card rounded-xl shadow-lg p-5 relative transition transform hover:-translate-y-1 hover:shadow-2xl animate-fadeIn border" style={{ borderColor: 'var(--border)' }}>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">{title}</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold truncate break-words whitespace-normal max-w-[70%]">{title}</h2>
 
         {/* Menu */}
         <div className="relative ">
@@ -46,11 +46,8 @@ export default function BoardCard({ title, onView, onEdit, onDelete }) {
       {/* View Button */}
       <button
         onClick={onView}
-        className="px-3 py-2 rounded border transition cursor-pointer
-    bg-[var(--text)] text-[var(--card)] hover:opacity-90 font-semibold"
-        style={{
-          borderColor: "var(--border)"
-        }}
+        className="px-4 py-2 rounded-lg transition cursor-pointer bg-gradient-to-r from-[var(--text)] to-[var(--text)]/90 text-[var(--card)] hover:scale-[1.01] font-semibold"
+        style={{ borderColor: 'var(--border)' }}
       >
         View Tasks
       </button>
