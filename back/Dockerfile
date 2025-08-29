@@ -2,7 +2,7 @@
 FROM node:22-alpine AS dev
 WORKDIR /app
 COPY ./package*.json ./
-RUN npm i
+RUN npm ci
 COPY . .
 EXPOSE 5000
 CMD ["npm", "run", "dev"]
@@ -11,7 +11,7 @@ CMD ["npm", "run", "dev"]
 FROM node:22-alpine AS prod
 WORKDIR /app
 COPY ./package*.json ./
-RUN npm i --omit=dev
+RUN npm ci --omit=dev
 COPY . .
 EXPOSE 5000
 CMD ["node", "index.js"]

@@ -23,13 +23,21 @@ app.use((req, res, next) => {
 });
 const mongo_url = process.env.MONGO_URL;
 
-const mongoConnect = async () => {
-    try {
-        await mongoose.connect(mongo_url);
-        console.log("MongoDB connected successfully");
-    } catch (error) {
-        console.error("MongoDB connection failed:", error);
+const mongoConnect = async (retries = 5, delay = 3000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            await mongoose.connect(mongo_url);
+            console.log("MongoDB connected successfully");
+            return;
+        } catch (error) {
+            console.error(`MongoDB connection attempt ${i + 1} failed:`, error.message || error);
+            if (i < retries - 1) {
+                console.log(`Retrying in ${delay}ms ...`);
+                await new Promise((r) => setTimeout(r, delay));
+            }
+        }
     }
+    console.error("MongoDB connection failed after retries.");
 }
 mongoConnect();
 
@@ -43,6 +51,6 @@ app.use((req, res) => {
     res.status(404).send(`Cannot ${req.method} ${req.originalUrl}`);
 });
 
-app.listen(5100, () => {
-    console.log("backend working on port 5100");
+app.listen(5000, () => {
+    console.log("backend working on port 5000");
 })

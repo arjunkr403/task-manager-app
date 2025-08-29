@@ -1,24 +1,23 @@
-version: '3.8'
-
 services:
 
   front:
-    build: 
+    build:
       context: ./front
       target: dev
-    ports: 
+    ports:
       - "5173:5173"
     volumes:
       - ./front:/app                 # Mounts your code for live reload during development
       - /app/node_modules            # Prevents host node_modules from interfering (clean deps)
     restart: unless-stopped
-    depends_on: 
+    depends_on:
       - back
-    command: npm run dev
+    # Ensure Vite binds to 0.0.0.0 inside container so host can access it
+    command: ["npm", "run", "dev", "--", "--host"]
 
 
   back:
-    build: 
+    build:
       context: ./back
       target: dev
     ports:
@@ -31,15 +30,16 @@ services:
       - .env.dev
     depends_on:
       - mongo
-    command: nodemon index.js
-    
+    # Use npm to run dev script so nodemon from devDependencies is resolved correctly
+    command: ["npm", "run", "dev"]
+
 
   mongo:
     image: mongo:7.0
     volumes:
       - mongoDb:/data/db
     restart: unless-stopped
-    
+
 
 volumes:
   mongoDb:
