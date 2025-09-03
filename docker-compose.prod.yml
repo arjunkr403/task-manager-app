@@ -9,7 +9,8 @@ services:
     ports:
       - 80:80
     restart: always
-
+    networks:
+      - app-network      
 
   back:
     build: 
@@ -29,6 +30,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network 
 
   mongo:
     image: mongo:7.0
@@ -40,6 +43,12 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    networks:
+      - app-network
 
 volumes:
   mongoDb:
+
+networks:
+  app-network:
+    driver: bridge
