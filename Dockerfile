@@ -3,6 +3,8 @@ FROM node:22-alpine AS build
 WORKDIR /app/front
 COPY front/package*.json ./
 RUN npm ci
+COPY front/.env ./
+
 COPY front/ ./
 RUN npm run build
 
