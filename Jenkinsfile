@@ -51,5 +51,11 @@ pipeline {
                 }
             }
         }
+
+        stage('Cleanup') {
+            steps {
+                sh "docker system prune -af || true"
+            }
+        }
     }
 }
