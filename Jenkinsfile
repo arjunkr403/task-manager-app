@@ -4,7 +4,7 @@ pipeline {
     stages{
         stage ('Checkout'){
             steps{
-                git branch: 'main', url: 'https://github.com/arjunkr403/task-manager-app.git'
+                git branch: 'master', url: 'https://github.com/arjunkr403/task-manager-app.git'
             }
         }
         stage ('Build'){
