@@ -23,13 +23,13 @@ pipeline {
                 script {
                     if (env.BRANCH_NAME == "master") {
                         sh 'docker compose -f docker-compose.prod.yml down || true'
-                        sh 'docker compose -f docker-compose.prod.yml up --build -d'
+                        echo "Building for production..."
                     } else if (env.BRANCH_NAME == "dev") {
                         sh 'docker compose -f docker-compose.dev.yml down || true'
-                        sh 'docker compose -f docker-compose.dev.yml up --build -d'
+                        echo "Building for development..."
                     } else {
                         sh 'docker compose -f docker-compose.test.yml down || true'
-                        sh 'docker compose -f docker-compose.test.yml up --build -d'
+                        echo "Building for testing..."
                     }
                 }
             }
