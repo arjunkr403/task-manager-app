@@ -1,0 +1,18 @@
+services:
+  back:
+    build:
+      context: ./back
+    depends_on:
+      - mongo
+    command: ["npm", "test"] 
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:7.0
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
