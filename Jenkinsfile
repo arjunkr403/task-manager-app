@@ -14,6 +14,7 @@ pipeline {
                     string(credentialsId: 'taskmnr-front-env', variable: 'FRONT_ENV_TEXT')
                 ]) {
                     sh '''
+                    echo 'hello'
                     cp "$ROOT_ENV_FILE" .env
                     mkdir -p front
                     echo "$FRONT_ENV_TEXT" > front/.env
