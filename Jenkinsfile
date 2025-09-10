@@ -2,11 +2,11 @@ pipeline {
     agent { label 'docker-agent' }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'master', url: 'https://github.com/arjunkr403/task-manager-app.git'
-            }
-        }
+        // stage('Checkout') {
+        //     steps {
+        //         git branch: 'master', url: 'https://github.com/arjunkr403/task-manager-app.git'
+        //     }
+        // }
         stage('Setup Env') {
             steps {
                 withCredentials([
@@ -24,6 +24,7 @@ pipeline {
         }
         stage('Docker Build & Up') {
             steps {
+                echo "Building in master"
                 sh '''
                 docker compose -f docker-compose.prod.yml down || true
                 mkdir -p logs
