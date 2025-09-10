@@ -11,8 +11,8 @@ pipeline {
                     sh '''
                     echo "Setting up environment for branch: $BRANCH_NAME"
                     cp "$ROOT_ENV_FILE" .env
-                    mkdir -p frontend
-                    echo "$FRONT_ENV_TEXT" > frontend/.env
+                    mkdir -p front
+                    echo "$FRONT_ENV_TEXT" > front/.env
                     '''
                 }
             }
@@ -53,4 +53,3 @@ pipeline {
         }
     }
 }
-
