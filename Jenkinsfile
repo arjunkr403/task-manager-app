@@ -9,7 +9,7 @@ pipeline {
         }
         stage ('Build'){
             steps{
-                sh 'docker compose -f docker-compose.prod.yml build --no-cache'
+                sh 'Building...'
             }
         }
         stage('Test Backend') {
