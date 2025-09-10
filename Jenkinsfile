@@ -10,8 +10,8 @@ pipeline {
         stage('Setup Env') {
             steps {
                 withCredentials([
-                    file(credentialsId: 'Task Manager .env file', variable: 'ROOT_ENV_FILE'),
-                    string(credentialsId: 'taskmanager-front-env', variable: 'FRONT_ENV_TEXT')
+                    file(credentialsId: 'taskmngr-env', variable: 'ROOT_ENV_FILE'),
+                    string(credentialsId: 'taskmnr-front-env', variable: 'FRONT_ENV_TEXT')
                 ]) {
                     sh '''
                     cp "$ROOT_ENV_FILE" .env
