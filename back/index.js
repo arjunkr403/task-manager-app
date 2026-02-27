@@ -1,8 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-if (process.env.NODE_ENV !== "production") {
-    dotenv.config({ path: '../.env.dev' });
-}
+dotenv.config();
 import mongoose from 'mongoose';
 import cors from 'cors';
 import authRoute from './src/routes/auth.js';
