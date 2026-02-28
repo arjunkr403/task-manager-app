@@ -1,61 +1,40 @@
 pipeline {
     agent { label 'docker-agent' }
 
+    options {
+        timeout(time: 15, unit: 'MINUTES')
+    }
+
     stages {
         stage('Setup Env') {
             steps {
                 withCredentials([
-                    file(credentialsId: 'taskmngr-env', variable: 'ROOT_ENV_FILE'),
-                    string(credentialsId: 'taskmnr-front-env', variable: 'FRONT_ENV_TEXT')
+                    file(credentialsId: 'taskmngr-env-test', variable: 'ROOT_ENV_FILE')
                 ]) {
                     sh '''
-                    echo "Setting up environment for branch: $BRANCH_NAME"
-                    cp "$ROOT_ENV_FILE" .env
-                    mkdir -p front
-                    echo "$FRONT_ENV_TEXT" > front/.env
+                        rm -f .env
+                        cp "$ROOT_ENV_FILE" .env
                     '''
                 }
             }
         }
 
-        stage('Docker Build & Up') {
+        stage('Test') {
             steps {
-                script {
-                    if (env.BRANCH_NAME == "master") {
-                        sh 'docker compose -f docker-compose.prod.yml down || true'
-                        echo "Building for production..."
-                    } else if (env.BRANCH_NAME == "dev") {
-                        sh 'docker compose -f docker-compose.dev.yml down || true'
-                        echo "Building for development..."
-                    } else {
-                        sh 'docker compose -f docker-compose.test.yml down || true'
-                        echo "Building for testing..."
-                    }
-                }
+                sh 'docker compose -f docker-compose.test.yml down || true'
+                sh '''
+                    docker compose -f docker-compose.test.yml \
+                    up --build \
+                    --abort-on-container-exit \
+                    --exit-code-from back
+                '''
             }
         }
+    }
 
-        stage('Tests') {
-            steps {
-                script {
-                    if (fileExists('backend/package.json')) {
-                        dir('backend') {
-                            sh 'npm test || echo "No backend tests found, skipping..."'
-                        }
-                    }
-                    if (fileExists('frontend/package.json')) {
-                        dir('frontend') {
-                            sh 'npm test || echo "No frontend tests found, skipping..."'
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Cleanup') {
-            steps {
-                sh "docker system prune -af || true"
-            }
+    post {
+        always {
+            sh 'docker compose -f docker-compose.test.yml down --volumes --remove-orphans || true'
         }
     }
 }

@@ -4,7 +4,8 @@ services:
       context: ./back
     depends_on:
       - mongo
-    command: ["npm", "test"] 
+    env_file:
+      - .env
     networks:
       - app-network
 
