@@ -1,61 +1,50 @@
 pipeline {
     agent { label 'docker-agent' }
-
+    options {
+        timeout(time: 15, unit: 'MINUTES')
+    }
     stages {
         stage('Setup Env') {
             steps {
                 withCredentials([
-                    file(credentialsId: 'taskmngr-env', variable: 'ROOT_ENV_FILE'),
-                    string(credentialsId: 'taskmnr-front-env', variable: 'FRONT_ENV_TEXT')
+                    file(credentialsId: 'taskmngr-env-prod', variable: 'ROOT_ENV_FILE'),
+                    string(credentialsId: 'taskmngr-front-env', variable: 'FRONT_ENV_TEXT')
                 ]) {
                     sh '''
-                    echo "Setting up environment for branch: $BRANCH_NAME"
-                    cp "$ROOT_ENV_FILE" .env
-                    mkdir -p front
-                    echo "$FRONT_ENV_TEXT" > front/.env
+                        mkdir -p front
+                        rm -f .env front/.env
+                        cp "$ROOT_ENV_FILE" .env
+                        printf "%s" "$FRONT_ENV_TEXT" > front/.env
                     '''
                 }
             }
         }
-
-        stage('Docker Build & Up') {
+        stage('Build Images') {
             steps {
-                script {
-                    if (env.BRANCH_NAME == "master") {
-                        sh 'docker compose -f docker-compose.prod.yml down || true'
-                        echo "Building for production..."
-                    } else if (env.BRANCH_NAME == "dev") {
-                        sh 'docker compose -f docker-compose.dev.yml down || true'
-                        echo "Building for development..."
-                    } else {
-                        sh 'docker compose -f docker-compose.test.yml down || true'
-                        echo "Building for testing..."
-                    }
-                }
+                sh 'docker compose -f docker-compose.prod.yml build'
             }
         }
-
-        stage('Tests') {
+        stage('Deploy') {
             steps {
-                script {
-                    if (fileExists('backend/package.json')) {
-                        dir('backend') {
-                            sh 'npm test || echo "No backend tests found, skipping..."'
-                        }
-                    }
-                    if (fileExists('frontend/package.json')) {
-                        dir('frontend') {
-                            sh 'npm test || echo "No frontend tests found, skipping..."'
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Cleanup') {
-            steps {
-                sh "docker system prune -af || true"
+                sh '''
+                    docker compose -f docker-compose.prod.yml \
+                    up -d --remove-orphans
+                '''
             }
         }
     }
+     post {
+        always {
+            sh 'docker compose -f docker-compose.prod.yml down --remove-orphans || true'
+            sh 'docker system prune -af || true'
+        }
+    }
+    // post {
+    //     failure {
+    //         echo "❌ Deployment failed"
+    //     }
+    //     success {
+    //         echo "✅ Deployment successful"
+    //     }
+    // }
 }

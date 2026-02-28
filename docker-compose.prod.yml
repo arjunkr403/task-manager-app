@@ -23,6 +23,7 @@ services:
       - .env
     depends_on:
       - mongo
+      - redis
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/back"]
       interval: 10s
@@ -44,8 +45,17 @@ services:
     networks:
       - app-network
 
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redisData:/data
+    networks:
+      - app-network
+
 volumes:
   mongoDb:
+  redisData:
 
 networks:
   app-network:
