@@ -36,7 +36,7 @@ pipeline {
      post {
         always {
             sh 'docker compose -f docker-compose.prod.yml down --remove-orphans || true'
-            sh 'docker system prune -af || true'
+            sh 'docker builder prune -af || true'
         }
     }
     // post {
